@@ -1,4 +1,14 @@
 "use server";
-export const login = (values: unknown) => {
-  console.log(values);
+
+import { LoginSchema } from "@/schemas";
+
+export const login = async (values: unknown) => {
+  const validateFields = LoginSchema.safeParse(values);
+  if (!validateFields.success) {
+    return { error: "Invalid fields!" };
+  }
+
+  return {
+    success: "Email sent!",
+  };
 };
