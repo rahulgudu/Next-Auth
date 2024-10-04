@@ -1,6 +1,7 @@
 "use server";
 import { getUserByEmail } from "@/data/user";
 import { db } from "@/lib/db";
+import { generateVerificationToken } from "@/lib/tokens";
 import { RegisterSchema } from "@/schemas";
 import bcrypt from "bcrypt";
 import * as z from "zod";
@@ -29,8 +30,9 @@ export const register = async (values: z.infer<typeof RegisterSchema>) => {
   });
 
   // Todo: Send verification token email
+  const verificationToken = await generateVerificationToken(email);
 
   return {
-    success: "User Registered",
+    success: "Confirmation email sent!",
   };
 };
