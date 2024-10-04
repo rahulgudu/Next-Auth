@@ -18,8 +18,14 @@ import { Input } from "../ui/input";
 import { CardWrapper } from "./card-wrapper";
 import { FormError } from "./form-error";
 import { FormSuccess } from "./form-success";
+import { useSearchParams } from "next/navigation";
 
 export const LoginForm = () => {
+  const params = useSearchParams();
+  const urlError =
+    params.get("error") === "OAuthAccountNotLinked"
+      ? "Email Already in use with different provider"
+      : "";
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | undefined>("");
   const [success, setSuccess] = useState<string | undefined>("");
@@ -36,7 +42,8 @@ export const LoginForm = () => {
     startTransition(() => {
       login(values).then((data) => {
         setError(data?.error);
-        setSuccess(data?.success);
+        // todo: add when we add 2fa
+        // setSuccess(data?.success);
       });
     });
   };
@@ -79,7 +86,7 @@ export const LoginForm = () => {
                 </FormItem>
               )}
             />
-            <FormError message={error} />
+            <FormError message={error || urlError} />
             <FormSuccess message={success} />
           </div>
           <Button className="w-full" type="submit" disabled={isPending}>

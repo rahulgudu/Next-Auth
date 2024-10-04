@@ -11,9 +11,26 @@ export const {
   signIn,
   signOut,
 } = NextAuth({
+  pages: {
+    signIn: "/auth/login",
+    error: "/auth/error",
+  },
+  events: {
+    async linkAccount({ user }) {
+      await db.user.update({
+        where: { id: user.id },
+        data: { emailVerified: new Date() },
+      });
+    },
+  },
   callbacks: {
-    async signIn({ user }) {
+    async signIn({ user, account }) {
       const existingUser = await getUserById(user.id);
+
+      if (account?.provider === "github" || account?.provider === "google") {
+        return true;
+      }
+
       if (!existingUser || !existingUser.emailVerified) {
         return false;
       }

@@ -10,7 +10,7 @@ export const publicRoutes = ["/"];
  * These routes require authentication
  * @type {string[]}
  */
-export const authRoutes = ["/auth/login", "/auth/register"];
+export const authRoutes = ["/auth/login", "/auth/register", "/auth/error"];
 
 /**
  * The prifix for API authentication routes
@@ -23,4 +23,4 @@ export const apiAuthPrefix = "/api/auth";
  * Default redirection after logging in
  * @type {string}
  */
-export const DEFAULT_LOGIN_REDIRECT = "/settings"
+export const DEFAULT_LOGIN_REDIRECT = "/settings";
