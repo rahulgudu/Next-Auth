@@ -1,4 +1,5 @@
-import React from "react";
+"use client";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -8,31 +9,30 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { signIn } from "@/auth";
-import { CredentialsSignin } from "next-auth";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { login } from "../../../actions/login";
 
 const Login = () => {
-  const loginHandler = async (formData: FormData) => {
-    "use server";
-    const email = formData.get("email") as string | undefined;
-    const password = formData.get("password") as string | undefined;
+  const [error, setError] = useState("");
+  const router = useRouter();
+  const loginHandler = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
 
-    if (!email || !password) throw new Error("Please provide all the details");
+    const formData = new FormData(e.currentTarget);
+    const res = await login({
+      email: formData.get("email") as string,
+      password: formData.get("password") as string,
+    });
 
-    try {
-      await signIn("credentials", {
-        email,
-        password,
-        redirect: true,
-        redirectTo: "/"
-      });
-    } catch (error) {
-      const err = error as CredentialsSignin;
-      return err.message;
+    if ("error" in res) {
+      setError(res.error);
+    } else {
+      router.push("/");
     }
   };
+
   return (
     <div className="flex justify-center items-center h-dvh">
       <Card>
@@ -41,9 +41,14 @@ const Login = () => {
           <CardDescription>Card Description</CardDescription>
         </CardHeader>
         <CardContent>
-          <form className="flex flex-col gap-4" action={loginHandler}>
+          <form className="flex flex-col gap-4" onSubmit={loginHandler}>
             <Input type="email" placeholder="Email" name="email" />
             <Input type="password" placeholder="Password" name="password" />
+            {error ? (
+              <p className="text-destructive font-normal text-sm">{error}</p>
+            ) : (
+              ""
+            )}
             <Button type="submit">Login</Button>
           </form>
         </CardContent>
